@@ -14,8 +14,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.main_project.R
 import com.example.main_project.Auth.RetrofitClient
+import com.example.main_project.R
 import com.example.main_project.Auth.ViewModels.RegisterViewModel
 import com.example.main_project.databinding.FragmentSignupPhoneBinding
 import com.google.android.material.textfield.TextInputLayout
@@ -180,7 +180,8 @@ class SignupPhone : Fragment() {
             val jsonObject = JSONObject(response)
             jsonObject.getString("message")
         } catch (e: Exception) {
-            "An error occurred"
+            // If JSON parsing fails, return the raw response or a default message
+            response.ifEmpty { "An error occurred" }
         }
     }
 

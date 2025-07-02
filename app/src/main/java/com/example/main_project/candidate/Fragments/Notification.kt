@@ -50,34 +50,34 @@ class Notification : Fragment() {
                 if (response.isSuccessful && response.body() != null) {
                     val notifications = response.body()!!
                     if (notifications.isNotEmpty()) {
-                        val notification = notifications[0]
+                        val notificationText = notifications.joinToString("\n\n") { notification ->
+                            "${notification.title}\n${notification.message}"
+                        }
                         if (_binding != null) {
-                            binding.notify.text = "$notification.title\n$notification.message"
+                            binding.notify.text = notificationText
+                            binding.notify.visibility = View.VISIBLE
                             binding.notificationimages.visibility = View.GONE
                             binding.notificationtext.visibility = View.GONE
                             binding.notificationtext2.visibility = View.GONE
                         }
                     } else {
-                        if (_binding != null) {
-                            binding.notificationimages.visibility = View.VISIBLE
-                            binding.notificationtext.visibility = View.VISIBLE
-                            binding.notificationtext2.visibility = View.VISIBLE
-                        }
+                        showNoNotificationsUI()
                     }
                 } else {
-                    if (_binding != null) {
-                        binding.notificationimages.visibility = View.VISIBLE
-                        binding.notificationtext.visibility = View.VISIBLE
-                        binding.notificationtext2.visibility = View.VISIBLE
-                    }
+                    showNoNotificationsUI()
                 }
             } catch (e: Exception) {
-                if (_binding != null) {
-                    binding.notificationimages.visibility = View.VISIBLE
-                    binding.notificationtext.visibility = View.VISIBLE
-                    binding.notificationtext2.visibility = View.VISIBLE
-                }
+                showNoNotificationsUI()
             }
+        }
+    }
+
+    private fun showNoNotificationsUI() {
+        if (_binding != null) {
+            binding.notify.visibility = View.GONE
+            binding.notificationimages.visibility = View.VISIBLE
+            binding.notificationtext.visibility = View.VISIBLE
+            binding.notificationtext2.visibility = View.VISIBLE
         }
     }
 

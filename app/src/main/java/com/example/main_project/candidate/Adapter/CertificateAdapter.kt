@@ -69,7 +69,7 @@ class CertificateAdapter(
         }
 
         private fun deleteCertificate(certificateId: String) {
-            CoroutineScope(Dispatchers.Main).launch {  // Use CoroutineScope instead of lifecycleScope
+            CoroutineScope(Dispatchers.Main).launch {
                 val retrofit = CandidateProfileRetrofitClient.instance(context)
                 val apiService = retrofit.create(CandidateInterface::class.java)
 
@@ -77,7 +77,6 @@ class CertificateAdapter(
                     val response = apiService.deleteCertificate(certificateId)
 
                     if (response.isSuccessful) {
-                        // Successfully deleted the certificate, now remove it from the list
                         val position = certificates.indexOfFirst { it.id == certificateId }
                         if (position != -1) {
                             certificates.removeAt(position)

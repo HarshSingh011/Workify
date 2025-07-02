@@ -15,6 +15,7 @@ import com.example.main_project.SeeJobs.Adapter.SeeAllJobsFilterAdapter
 import com.example.main_project.databinding.FragmentSeeAllJobsBinding
 import kotlinx.coroutines.launch
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import com.example.main_project.R
 import org.json.JSONObject
 
@@ -36,6 +37,15 @@ class SeeAllJobs : Fragment() {
         binding.image.setOnClickListener {
             findNavController().navigate(R.id.notification)
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.seeAllJobs)
+                }
+            }
+        )
 
         return binding.root
     }

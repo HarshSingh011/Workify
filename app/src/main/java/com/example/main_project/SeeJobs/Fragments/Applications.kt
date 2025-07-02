@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.main_project.CandidateInterface
@@ -41,6 +43,15 @@ class Applications : Fragment() {
         applicationsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         fetchapplicatioins()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.applications)
+                }
+            }
+        )
 
         return binding.root
     }

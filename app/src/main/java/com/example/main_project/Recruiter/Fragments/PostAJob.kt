@@ -144,9 +144,11 @@ class PostAJob : Fragment() {
             isValid = false
         }
 
-        if( skill.isBlank()){
-            setToErrorDrawable(binding.skillInput)
-            isValid = false
+        if( minimumsal >= maximumsal){
+            binding.MinimumSalaryInput.editText?.setBackgroundResource(R.drawable.error_prop)
+            binding.MinimumSalaryInput.error = "Min salary greater than max salary"
+            binding.MinimumSalaryInput.clearFocus()
+            isValid= false
         }
 
         if( minimumsal.isBlank()){
@@ -168,6 +170,8 @@ class PostAJob : Fragment() {
             setToErrorDrawable(binding.jobtitleInput)
             isValid = false
         }
+
+
 
         if (experience.isBlank()) {
             setToErrorDrawable(binding.ExperienceInput)

@@ -13,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.main_project.CandidateInterface
 import com.example.main_project.CandidateProfileRetrofitClient
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
 import java.net.URL
 
 class RecruiterApplicantsAdapter(
@@ -143,8 +146,16 @@ class RecruiterApplicantsAdapter(
     }
 
     private fun downloadFile(fileUrl: String, context: Context): File {
-        val file = File(context.cacheDir, "temp_resume_${System.currentTimeMillis()}.pdf")
-        URL(fileUrl).openStream().use { input ->
+        val file = File(context.cacheDir, "temp_file_${System.currentTimeMillis()}")
+        val url = URL(fileUrl)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connect()
+
+        if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+            throw Exception("Server returned HTTP ${connection.responseCode}")
+        }
+
+        connection.inputStream.use { input ->
             FileOutputStream(file).use { output ->
                 input.copyTo(output)
             }
@@ -153,21 +164,33 @@ class RecruiterApplicantsAdapter(
     }
 
     private fun openFile(context: Context, fileUrl: String) {
-        if (fileUrl.isNotEmpty()) {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(fileUrl)
-                type = "application/pdf"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                context.startActivity(intent)
+                val file = downloadFile(fileUrl, context)
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, getMimeType(fileUrl))
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                withContext(Dispatchers.Main) {
+                    context.startActivity(Intent.createChooser(intent, "Open File"))
+                }
             } catch (e: Exception) {
-                Toast.makeText(context, "Unable to open the file", Toast.LENGTH_SHORT).show()
-                Log.e("RecruiterAdapter", "Error opening file: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Error opening file: ${e.message}", Toast.LENGTH_LONG).show()
+                    Log.e("RecruiterAdapter", "Error opening file: ${e.message}")
+                }
             }
-        } else {
-            Toast.makeText(context, "Resume not available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getMimeType(url: String): String {
+        return when {
+            url.endsWith(".pdf", true) -> "application/pdf"
+            url.endsWith(".jpg", true) || url.endsWith(".jpeg", true) -> "image/jpeg"
+            url.endsWith(".png", true) -> "image/png"
+            else -> "*/*"
         }
     }
 }
+

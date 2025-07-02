@@ -95,10 +95,6 @@ class SignupEmail : Fragment() {
 
         val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$".toRegex()
         if (!passwordRegex.matches(password)) {
-//            binding.editEmail.clearFocus()
-//            binding.editPassword.clearFocus()
-//            binding.editPassword.error = "8-20 char, A-Z, a-z, 0-9, and symbol"
-//            binding.editPassword.editText?.setBackgroundResource(R.drawable.error_prop)
             applyErrorBackground(binding.editPassword, "8-20 char, A-Z, a-z, 0-9, and symbol")
             hasError = true
         } else {
@@ -158,14 +154,13 @@ class SignupEmail : Fragment() {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 loadingDialog.dismiss()
                 binding.getOTP.isEnabled = true
+                
                 if (response.isSuccessful && response.body() != null) {
-                    println("success")
                     val responseMessage = response.body()?.message ?: "Registration successful"
                     Toast.makeText(requireContext(), responseMessage, Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.verificationCode)
                 } else {
                     val errorResponse = response.errorBody()?.string()
-                    println("failer")
                     val errorMessage = errorResponse?.let { parseErrorMessage(it) } ?: "An error occurred"
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                     applyErrorBackground(binding.editEmail, errorMessage)
@@ -177,6 +172,7 @@ class SignupEmail : Fragment() {
                 loadingDialog.dismiss()
                 binding.getOTP.isEnabled = true
                 binding.editPassword.clearFocus()
+                
                 val errorMessage = if (t is java.net.SocketTimeoutException) {
                     "Request timed out. Please try again."
                 } else {
@@ -193,7 +189,7 @@ class SignupEmail : Fragment() {
             val jsonObject = JSONObject(response)
             jsonObject.getString("message")
         } catch (e: Exception) {
-            "An error occurred"
+            response.ifEmpty { "An error occurred" }
         }
     }
 

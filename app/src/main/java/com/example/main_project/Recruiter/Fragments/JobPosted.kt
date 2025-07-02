@@ -1,5 +1,6 @@
 package com.example.main_project.Recruiter.Fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ class JobPosted : Fragment() {
 
     private var _binding: FragmentJobPostedBinding? = null
     private val binding get() = _binding!!
+    private lateinit var loadingDialog: Dialog
 
     private lateinit var jobAdapter: RecruiterSeeJobsAdapter
     private var jobList: MutableList<JobContent> = mutableListOf()
@@ -54,13 +56,27 @@ class JobPosted : Fragment() {
         }
     }
 
+    private fun showLoadingDialog() {
+        if (!::loadingDialog.isInitialized) {
+            loadingDialog = Dialog(requireContext())
+            loadingDialog.setContentView(R.layout.loader)
+            loadingDialog.window?.setBackgroundDrawableResource(android.R.color.white)
+            loadingDialog.window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            loadingDialog.setCancelable(false)
+            loadingDialog.show()
+        }
+    }
+
     private fun fetchJobs() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+
                 val apiClient = CandidateProfileRetrofitClient.instance(requireContext())
                     .create(CandidateInterface::class.java)
                 val response = apiClient.getrecruiterpostedJobs()
-
                 if (response.isSuccessful) {
                     val jobs = response.body() ?: emptyList()
 

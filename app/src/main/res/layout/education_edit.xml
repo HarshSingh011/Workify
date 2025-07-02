@@ -29,8 +29,15 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
 
-
-
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/vector"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/institutionName"
@@ -41,7 +48,6 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@id/guideline1"
-            app:layout_constraintEnd_toEndOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText

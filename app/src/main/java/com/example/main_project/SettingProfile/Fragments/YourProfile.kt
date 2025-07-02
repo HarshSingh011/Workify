@@ -74,6 +74,8 @@ class YourProfile : Fragment() {
             }
         }
 
+
+
         binding.nextFragment.setOnClickListener {
             if (validateInputs()) {
                 sendCandidateData()

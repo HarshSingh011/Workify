@@ -115,7 +115,7 @@ interface CandidateInterface {
         @Part image: MultipartBody.Part
     ): Response<ProfilePictureUploadResponse>
 
-    @GET("get-all")
+    @GET("notification/get-all")
     suspend fun getNotifications(): Response<List<NotificationModel>>
 
     @GET("jobs/applications/candidate")

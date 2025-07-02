@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object CandidateProfileRetrofitClient {
 
-    private const val BASE_URL = "https://naitikjain.me/api/"
+    private const val BASE_URL = "https://workify-springboot.onrender.com/api/"
     private var retrofit: Retrofit? = null
 
     fun instance(context: Context): Retrofit {

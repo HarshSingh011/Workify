@@ -68,6 +68,8 @@ class JobsDetails : Fragment() {
             }
         }
 
+
+
         binding.backbutton.setOnClickListener {
             findNavController().navigate(R.id.searchJob)
         }
